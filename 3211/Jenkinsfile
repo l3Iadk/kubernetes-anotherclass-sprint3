@@ -48,6 +48,10 @@ pipeline {
                 // jar 파일 복사
                 sh "cp ./build/libs/app-${APP_VERSION}-SNAPSHOT.jar ./${CLASS_NUM}/build/docker/app-${APP_VERSION}-SNAPSHOT.jar"
 
+				// 도커 인증
+				withCredentials([usernamePassword(credentialsId: 'docker_password', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        sh "echo " + '${PASSWORD}' + " | docker login -u " + '${USERNAME}' + " --password-stdin"
+				}
                 // 도커 빌드
                 sh "docker build -t ${DOCKERHUB_USERNAME}/api-tester:${APP_VERSION} ./${CLASS_NUM}/build/docker"
             }
